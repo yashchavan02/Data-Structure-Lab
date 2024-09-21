@@ -9,6 +9,7 @@ struct textNode {
 class circularList {
    textNode *head , *tail;
    public:
+
    circularList(){
       head = nullptr;
       tail = nullptr;
@@ -16,12 +17,19 @@ class circularList {
 
    void prependText();
    void appendText();
-   void displayText();
+   void insertText();
+   void insertAfterText(); 
    void popText();
    void popbackText();
+   void searchText(); 
    void deleteText(); 
-   void insertText();
-   void searchText();  
+   void removeText();
+   void displayText();
+   void emptyText();
+
+   ~ circularList(){
+      emptyText();
+   }
 };
 
 void circularList :: prependText(){
@@ -215,20 +223,120 @@ void circularList :: insertText(){
    ptr->next = newText;
 }
 
-int main(){
-    circularList l1; 
+void circularList :: insertAfterText(){
+    string st;
+    cout<<"enter the text to insert after $ ";
+    cin>>st;
+    textNode *ptr = head;
+    if(!ptr){ 
+        prependText(); 
+        return;
+    }
+    while(ptr->t != st){
+         ptr = ptr->next;
+         if(ptr == tail) break;
+    }
+    if(ptr->t == st ){
+        string s;
+        cout<<"enter the text to insert $ ";
+        cin>>s;
+        textNode *newText = new textNode ;
+        if(!newText) return;
+        newText->t = s;
+        newText->next = ptr->next;
+        ptr->next = newText;
+    }
+    else {
+      cout<<"$ "<<st<<" is not found in list"<<endl;
+    }
+}
 
-    l1.appendText(); 
-    l1.appendText(); 
-    l1.appendText(); 
-    l1.popText();
-    l1.popbackText();
-    l1.deleteText();
-    l1.insertText();
-    l1.displayText();  
-    l1.insertText(); 
-    l1.displayText(); 
-    l1.searchText(); 
-                            
-    return 0;
+void circularList :: emptyText(){
+   textNode *ptr = head;
+   while(ptr != head){
+      textNode *temp = ptr;
+      ptr = ptr->next;
+      delete temp;
+   }
+   delete head; 
+}
+
+void circularList :: removeText(){
+   textNode *ptr = head;
+   int pos;
+   cout<<"enter position to remove $ ";
+   cin>>pos;
+   if(pos <= 0 ){
+      cout<<"$ you enter invalid pos can't remove"<<endl;
+   }
+   if(pos == 1){
+      popText();
+      return;
+   }
+   for(int i=1;i<pos-1;i++){
+      ptr = ptr->next;
+   }
+   textNode *temp = ptr->next;
+   ptr->next = temp->next;
+   delete temp;
+}
+
+int main(){
+
+   circularList l1; 
+
+   cout<<"Enter $ "<<endl;
+   cout<<"1 for add text at beg"<<endl<<"2 for add text at end"<<endl<<"3 for insert text "<<endl<<"4 for insert text after"<<endl<<"5 for delete first text"<<endl<<"6 for delete last text"<<endl<<"7 for search text"<<endl<<"8 for delete the text"<<endl<<"9 for remove text"<<endl<<"10 for show all text"<<endl;
+
+   while(true){
+     cout<<endl<<"Enter Choice $ ";
+     int choice;
+     cin>>choice;
+     switch(choice){
+       case 1 :
+        l1.prependText();
+        break; 
+
+       case 2 :
+        l1.appendText();
+        break;
+
+       case 3 :
+        l1.insertText();
+        break;
+
+       case 4 :
+        l1.insertAfterText(); 
+        break;
+
+       case 5 :
+        l1.popText();
+        break;	
+
+       case 6 :
+        l1.popbackText();
+        break;
+
+       case 7 :
+        l1.searchText(); 
+        break;
+
+       case 8 :
+        l1.deleteText(); 
+        break;
+
+       case 9 :
+        l1.removeText();
+        break;
+
+       case 10 :
+        l1.displayText();
+        break;	
+
+       default:
+        cout<<endl<<"You Exit"<<endl<<endl;
+        return 0; 
+     }
+   }                     
+   return 0;
 } 
