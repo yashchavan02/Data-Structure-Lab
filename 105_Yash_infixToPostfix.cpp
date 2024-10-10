@@ -1,12 +1,14 @@
-#include <climits>
-#include <cstdio>
+#include <iostream>
+#include <string>
 using namespace std;
 
-class stack {
-  int top, size, *arr;
+template <class T> class stack {
+  int top, size;
+  T *arr;
+
 public:
   stack(int size) {
-    arr = new int[size];
+    arr = new T[size];
     if (!arr)
       return;
     this->size = size;
@@ -17,7 +19,7 @@ public:
 
   bool isEmpty() { return (top == -1); }
 
-  void push(int val) {
+  void push(T val) {
     if (isFull()) {
       printf("Stack is full, can't push\n");
       return;
@@ -25,71 +27,67 @@ public:
     arr[++top] = val;
   }
 
-  int pop() {
+  T pop() {
     if (isEmpty()) {
       printf("Stack is empty, can't pop\n");
-      return INT_MIN;
+      return 0;
     }
     return arr[top--];
   }
 
-  int Top() {
-    if (!isEmpty()) {
-      return arr[top];
+  T Top() {
+    if (isEmpty()) {
+      return 0;
     }
-    return INT_MIN;
+    return arr[top];
   }
 };
-
-bool isDigit(char ch) { return (ch >= '0' && ch <= '9'); }
 
 bool isOperator(char ch) {
   return (ch == '+' || ch == '-' || ch == '*' || ch == '/');
 }
 
-int eval(int op1, int op2, char opr) {
-  switch (opr) {
-  case '+':
-    return (op1 + op2);
-  case '-':
-    return (op1 - op2);
-  case '*':
-    return (op1 * op2);
-  case '/':
-    if (op2 != 0) {
-      return (op1 / op2);
-    } else {
-      printf("Division by zero error\n");
-      return 0;
-    }
-  default:
-    return 0;
+int precedence(char ch) {
+  if (ch == '+' || ch == '-') {
+    return 1;
+  } else if (ch == '*' || ch == '/') {
+    return 2;
   }
+  return 0;
 }
 
-int main(int argc, char **argv) {
-  stack s(20);
-  for (int i = 1; i < argc; i++) {
-    printf("%s ", argv[i]);
-  }
-  printf("\n");
+string infixToPostfix(string &s) {
+  stack<char> opr(20);
+  string postfix;
+  int i = 0;
 
-  for (int i = 1; i < argc; i++) {
-    int n = 0;
-    if (isDigit(argv[i][0])) {
-      int j = 0;
-      while (argv[i][j] != '\0') {
-        n = n * 10 + (argv[i][j] - '0');
-        j++;
+  while (i < s.size()) {
+    if (isdigit(s[i])) {
+      while (i < s.size() && isdigit(s[i])) {
+        postfix += s[i++];
       }
-      s.push(n);
-    } else if (isOperator(argv[i][0])) {
-      int op2 = s.pop();
-      int op1 = s.pop(); 
-      char opr = argv[i][0];
-      s.push(eval(op1, op2, opr));
+      postfix += ' ';
+    } else if (isOperator(s[i])) {
+      while (!opr.isEmpty() && precedence(opr.Top()) >= precedence(s[i])) {
+        postfix += opr.pop();
+        postfix += ' ';
+      }
+      opr.push(s[i]);
+      i++;
     }
   }
-  printf("Final result : %d\n", s.Top());
+
+  while (!opr.isEmpty()) {
+    postfix += opr.pop();
+    postfix += ' ';
+  }
+
+  return postfix;
+}
+
+int main() {
+  string infix = "10+20*2";
+  string postfix = infixToPostfix(infix);
+  cout << "Postfix: " << postfix << "\n";
   return 0;
 }
