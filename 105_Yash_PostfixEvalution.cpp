@@ -4,6 +4,7 @@ using namespace std;
 
 class stack {
   int top, size, *arr;
+
 public:
   stack(int size) {
     arr = new int[size];
@@ -44,7 +45,7 @@ public:
 bool isDigit(char ch) { return (ch >= '0' && ch <= '9'); }
 
 bool isOperator(char ch) {
-  return (ch == '+' || ch == '-' || ch == '*' || ch == '/');
+  return (ch == '+' || ch == '-' || ch == 'x' || ch == '/');
 }
 
 int eval(int op1, int op2, char opr) {
@@ -53,13 +54,13 @@ int eval(int op1, int op2, char opr) {
     return (op1 + op2);
   case '-':
     return (op1 - op2);
-  case '*':
+  case 'x':
     return (op1 * op2);
   case '/':
     if (op2 != 0) {
       return (op1 / op2);
     } else {
-      printf("Division by zero error\n");
+      printf("division by zero is not possible \n");
       return 0;
     }
   default:
@@ -69,10 +70,6 @@ int eval(int op1, int op2, char opr) {
 
 int main(int argc, char **argv) {
   stack s(20);
-  for (int i = 1; i < argc; i++) {
-    printf("%s ", argv[i]);
-  }
-  printf("\n");
 
   for (int i = 1; i < argc; i++) {
     int n = 0;
@@ -85,11 +82,28 @@ int main(int argc, char **argv) {
       s.push(n);
     } else if (isOperator(argv[i][0])) {
       int op2 = s.pop();
-      int op1 = s.pop(); 
+      int op1 = s.pop();
       char opr = argv[i][0];
       s.push(eval(op1, op2, opr));
     }
   }
-  printf("Final result : %d\n", s.Top());
+
+  printf("%d\n", s.Top());
   return 0;
+
+  /*
+
+  PS C:\Users\chava\OneDrive\Desktop\GitHub\DSA-LAB> g++
+  105_Yash_PostfixEvalution.cpp
+
+  PS C:\Users\chava\OneDrive\Desktop\GitHub\DSA-LAB> ./a.exe 12 12 +
+  24
+  PS C:\Users\chava\OneDrive\Desktop\GitHub\DSA-LAB> ./a.exe 12 12 -
+  0
+  PS C:\Users\chava\OneDrive\Desktop\GitHub\DSA-LAB> ./a.exe 13 12 -
+  1
+  PS C:\Users\chava\OneDrive\Desktop\GitHub\DSA-LAB> ./a.exe 12 13 + 4 3 x  -
+  13
+
+  */
 }
